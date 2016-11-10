@@ -1,0 +1,102 @@
+spring:
+  main:
+    banner-mode: 'OFF'
+  profiles:
+    active: dev
+security:
+  oauth2:
+    client:
+      client-id: acme
+      client-secret: acmesecret
+      scope: read,write
+      auto-approve-scopes: '.*'
+endpoints:
+  enabled: false
+  health.enabled: true
+management:
+  context-path: /manage
+app:
+  jwt:
+    secret: qwerty
+  asset-host: localhost:3001
+  asset-manifest-url: http://localhost:3001/manifest.json
+---
+spring:
+  profiles: dev
+  datasource:
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:h2:./db/dev;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  jpa:
+    database: H2
+    hibernate:
+      ddl-auto: create
+  thymeleaf:
+    cache: false
+flyway:
+  enabled: false
+---
+spring:
+  profiles: dev2
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/springboot-angular2-tutorial?useSSL=false
+    username: root
+    password:
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: validate
+logging:
+  config: classpath:logback-prod.xml
+---
+spring:
+  profiles: test
+  datasource:
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  jpa:
+    database: H2
+    hibernate:
+      ddl-auto: create
+flyway:
+  enabled: false
+server:
+  port: 0
+---
+spring:
+  profiles: stg
+  redis:
+    host: ${REDIS_ENDPOINT}
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    jdbcUrl: jdbc:mysql://${RDS_ENDPOINT}/ebdb?useSSL=false
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: validate
+logging:
+  config: classpath:logback-prod.xml
+app:
+  asset-host: cdn.hana053.com
+  asset-manifest-url: https://s3.amazonaws.com/cdn.hana053.com/manifest.json
+---
+spring:
+  profiles: prod
+  redis:
+    host: ${REDIS_ENDPOINT}
+  datasource:
+    driverClassName: org.mariadb.jdbc.Driver
+    jdbcUrl: jdbc:mysql://${RDS_ENDPOINT}/ebdb?useSSL=false
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: validate
+logging:
+  config: classpath:logback-prod.xml
+app:
+  asset-host: cdn.hana053.com
+  asset-manifest-url: https://s3.amazonaws.com/cdn.hana053.com/manifest.json
