@@ -58,6 +58,11 @@ public class UserServiceImpl implements UserService{
         return findOne(currentUser.getId());
 	}
 
+	@Override
+	public User create(UserParams params) {
+		return userRepository.save(params.toUser());
+	}
+
 
   
 }

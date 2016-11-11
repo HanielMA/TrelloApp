@@ -13,4 +13,6 @@ public interface UserService extends org.springframework.security.core.userdetai
     Optional<UserDTO> findOne(Long id);
 
     Optional<UserDTO> findMe();
+    
+    User create(UserParams params);
 }

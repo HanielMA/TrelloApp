@@ -60,7 +60,7 @@ public class UserController {
 	
 	@RequestMapping(value="/create", method = RequestMethod.POST)
     public User create(@Valid @RequestBody UserParams params) {
-        return userRepository.save(params.toUser());
+        return userService.create(params);
     }
 	
 	@RequestMapping("/me")
