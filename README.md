@@ -1,6 +1,7 @@
 # Aplicación con Spring Boot
 
 La idea inicial parte de la iniciativa de **[Marcos](https://github.com/markikito)**. En resumen es una aplicación con **[Spring](https://github.com/HanielMA/TrelloApp)** en el back y con **[Angular2](www.repositoriodeAngular2.es)** en el front, la cual tiene dos finalidades:
+
 1. Ser un valor añadido, para nosotros, a la aplicación Trello.
 1. Generar conocimiento del funcionamiento de un proyecto, del trabajo en equipo y de las tecnologías actuales.
 
@@ -33,7 +34,7 @@ mvn spring-boot:run
 ###/api/users/me
 
 	Funcionamiento: Devuelve datos del usuario autenticado.
-	
+
 	Headers: 
 		x-auth-token : (Generado en el Login)
 		Content-Type : application/json
