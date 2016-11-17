@@ -1,4 +1,6 @@
-# Aplicación con Spring Boot
+# Aplicación con Spring Boot 
+
+[![Build Status](https://travis-ci.org/HanielMA/TrelloApp.svg?branch=master)](https://travis-ci.org/HanielMA/TrelloApp)
 
 La idea inicial parte de la iniciativa de **[Marcos](https://github.com/markikito)**. En resumen es una aplicación con **[Spring](https://github.com/HanielMA/TrelloApp)** en el back y con **[Angular2](www.repositoriodeAngular2.es)** en el front, la cual tiene dos finalidades:
 
