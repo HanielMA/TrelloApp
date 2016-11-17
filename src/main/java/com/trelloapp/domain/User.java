@@ -18,12 +18,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.querydsl.core.Tuple;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
 @ToString
@@ -44,7 +44,6 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
-    @NotNull
     @Size(min = 4, max = 30)
     @Getter
     @Setter

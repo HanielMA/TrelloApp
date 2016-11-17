@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.trelloapp.domain.User;
+import com.trelloapp.dto.UserDTO;
 import com.trelloapp.repository.UserRepository;
 
 @Service
@@ -21,10 +22,9 @@ public class SecurityContextServiceImpl implements SecurityContextService {
     }
 
     @Override
-    public User currentUser() {
+    public UserDTO currentUser() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Optional<User> currentUser = userRepository.findOneByUsername(authentication.getName());
-        // TODO It may be better to return optional.
-        return currentUser.orElse(null);
+        return new UserDTO(currentUser.orElseThrow(null), false);
     }
 }

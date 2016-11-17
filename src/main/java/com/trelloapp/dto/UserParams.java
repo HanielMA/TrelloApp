@@ -7,14 +7,15 @@ import javax.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trelloapp.domain.User;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+@Builder
 @ToString
 @EqualsAndHashCode
 public final class UserParams {

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.trelloapp.domain.QUser;
 import com.trelloapp.domain.User;
-import com.trelloapp.dto.UserDTO;
 
 class UserRepositoryImpl implements UserRepositoryCustom {
 
@@ -21,14 +20,12 @@ class UserRepositoryImpl implements UserRepositoryCustom {
     }
     
 	@Override
-	public Optional<UserDTO> findOne(Long userId, User currentUser) {
+	public Optional<User> findOne(Long userId, User currentUser) {
         final User user = queryFactory.select(qUser)
                 .from(qUser)
                 .where(qUser.id.eq(userId))
-                .fetchOne();      
-        UserDTO usuarioDTO = UserDTO.builder().user(user).build();
-        
-        return Optional.ofNullable(usuarioDTO);
+                .fetchOne();
+        return Optional.ofNullable(user);
 	}
 	
 }

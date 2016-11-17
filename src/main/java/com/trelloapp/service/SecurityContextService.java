@@ -1,7 +1,7 @@
 package com.trelloapp.service;
 
-import com.trelloapp.domain.User;
+import com.trelloapp.dto.UserDTO;
 
 public interface SecurityContextService {
-    User currentUser();
+    UserDTO currentUser();
 }

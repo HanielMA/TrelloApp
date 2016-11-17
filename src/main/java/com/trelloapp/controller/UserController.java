@@ -58,11 +58,6 @@ public class UserController {
         return userRepository.findAll(pageable);
     }
 	
-	@RequestMapping(value="/create", method = RequestMethod.POST)
-    public User create(@Valid @RequestBody UserParams params) {
-        return userService.create(params);
-    }
-	
 	@RequestMapping("/me")
 	public UserDTO showMe() {
 		return userService.findMe().orElseThrow(UserNotFoundException::new);
@@ -72,15 +67,16 @@ public class UserController {
     public UserDTO show(@PathVariable("id") Long id) {
         return userService.findOne(id).orElseThrow(UserNotFoundException::new);
     }
-	
+	 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping(value = "/me", method = RequestMethod.PATCH)
     public ResponseEntity updateMe(@Valid @RequestBody UserParams params) {
-        User user = securityContextService.currentUser();
-        userService.update(user, params);
+        UserDTO userDTO = securityContextService.currentUser();
+        userService.update(userDTO, params);
 
         // when username was changed, re-issue jwt.
         HttpHeaders headers = new HttpHeaders();
-        headers.add("x-auth-token", tokenHandler.createTokenForUser(user));
+        headers.add("x-auth-token", tokenHandler.createTokenForUser(userService.loadUserByUsername(userDTO.getEmail())));
 
         return new ResponseEntity(headers, HttpStatus.OK);
     }
@@ -91,6 +87,7 @@ public class UserController {
 		return new ErrorResponse("email_already_taken", "This email is already taken.");
 	}
 
+	@SuppressWarnings("serial")
 	@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No user")
 	private class UserNotFoundException extends RuntimeException {
 	}
