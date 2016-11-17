@@ -9,8 +9,4 @@ addons:
     packages:
       - oracle-java8-installer
 notifications:
-  email:
-    recipients:
-	- haniel@hanielma.com
-    on_success: never
-    on_failure: always
+  email: false
