@@ -1,5 +1,6 @@
 language: java
 sudo: false
+#Las pruebas deben ser pasadas, cuando tengamos las pruebas.
 script: mvn clean install -DskipTests=true
 jdk:
   - oraclejdk8
