@@ -19,6 +19,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.julienvey.trello.Trello;
+import com.julienvey.trello.domain.Member;
+import com.julienvey.trello.exception.TrelloHttpException;
+import com.julienvey.trello.impl.TrelloImpl;
 import com.trelloapp.dto.UserDTO;
 import com.trelloapp.dto.UserParams;
 import com.trelloapp.service.UserService;
@@ -41,32 +45,53 @@ class StatelessLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        final UserParams params = new ObjectMapper().readValue(request.getInputStream(), UserParams.class);
+
+    	Authentication authentication = null;
+    	final UserParams params = new ObjectMapper().readValue(request.getInputStream(), UserParams.class);
         
-        /* Every time we authenticate with Trello, 
-         * we check if we are registered in our database.
-         * If we are registered we update,
-         * but we register a new field.
-         * And we always update the password,
-         * which really is a token of the Trello API.
-         */
+        try {
+        	//TODO Trello Developer API KEYS should be in a properties file
+        	Trello trello = new TrelloImpl("2b07d968e083f4a28a283a9370df0c26", params.getPassword().get());
+        	Member member = trello.getMemberInformation(params.getEmail().get());
+        	logger.info("El usuario con email " + member.getEmail() + " esta autorizado por Trello");
+            
+            createOrUpdateUsers(params);
+            
+            final UsernamePasswordAuthenticationToken loginToken = params.toAuthenticationToken();
+            authentication = getAuthenticationManager().authenticate(loginToken);
+            
+        } catch (TrelloHttpException e) {
+        	
+        	logger.error("El usuario con email " + params.getEmail().get() + " no esta utenticado por Trello.");
+        	new org.apache.http.auth.AuthenticationException("Error Autentication with Trello.");
+        }
         
-        Optional<UserDTO> userDTO = userService.findOneByUsername(params.getEmail().orElseThrow(() -> new UsernameNotFoundException("Error in the email field")));
-    	
-        userDTO.ifPresent(theUser -> {
-        	userService.update(theUser, params);
+		return authentication;   
+    }
+    
+    /**
+    * Every time we authenticate with Trello, 
+    * we check if we are registered in our database.
+    * If we are registered we update,
+    * but we register a new field.
+    * And we always update the password,
+    * which really is a token of the Trello API
+    * @param params
+    */
+	private void createOrUpdateUsers(final UserParams params) {
+		Optional<UserDTO> userDTO = userService.findOneByUsername(params.getEmail().orElseThrow(() -> new UsernameNotFoundException("Error in the email field")));
+         
+		userDTO.ifPresent(theUser -> {
+			userService.update(theUser, params);
 			logger.debug("El usuario con email " + theUser.getEmail() +" ha sido actualizado");
-    	});
-        
-        userDTO.orElseGet(() -> {
-        	UserDTO newUserDTO = userService.create(params);
+		});
+		
+		userDTO.orElseGet(() -> {
+			UserDTO newUserDTO = userService.create(params);
 			logger.debug("El usuario con email " + newUserDTO.getEmail() +"  ha sido creado." );
 			return newUserDTO;
-        });
-        
-        final UsernamePasswordAuthenticationToken loginToken = params.toAuthenticationToken();
-        return getAuthenticationManager().authenticate(loginToken);
-    }
+		});
+	}
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
@@ -79,8 +104,5 @@ class StatelessLoginFilter extends AbstractAuthenticationProcessingFilter {
         
         tokenAuthenticationService.addAuthentication(response, userAuthentication);
         SecurityContextHolder.getContext().setAuthentication(userAuthentication);
- 
-    }
-
-    
+    }    
 }
