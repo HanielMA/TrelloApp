@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julienvey.trello.Trello;
 import com.julienvey.trello.domain.Member;
@@ -41,14 +42,14 @@ class StatelessLoginFilter extends AbstractAuthenticationProcessingFilter {
         this.userService = userService;
         setAuthenticationManager(authenticationManager);
     }
-
+    
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
 
     	Authentication authentication = null;
-    	final UserParams params = new ObjectMapper().readValue(request.getInputStream(), UserParams.class);
-        
+    	final UserParams params = getUserParamsFromInputStream(request);
+
         try {
         	//TODO Trello Developer API KEYS should be in a properties file
         	Trello trello = new TrelloImpl("2b07d968e083f4a28a283a9370df0c26", params.getPassword().get());
@@ -56,18 +57,23 @@ class StatelessLoginFilter extends AbstractAuthenticationProcessingFilter {
         	logger.info("El usuario con email " + member.getEmail() + " esta autorizado por Trello");
             
             createOrUpdateUsers(params);
-            
-            final UsernamePasswordAuthenticationToken loginToken = params.toAuthenticationToken();
-            authentication = getAuthenticationManager().authenticate(loginToken);
+            authentication = authenticateUserWithLoginToken(params.toAuthenticationToken());
             
         } catch (TrelloHttpException e) {
-        	
         	logger.error("El usuario con email " + params.getEmail().get() + " no esta utenticado por Trello.");
         	new org.apache.http.auth.AuthenticationException("Error Autentication with Trello.");
         }
-        
 		return authentication;   
     }
+
+	private UserParams getUserParamsFromInputStream(HttpServletRequest request)
+			throws IOException, JsonParseException, JsonMappingException {
+		return new ObjectMapper().readValue(request.getInputStream(), UserParams.class);
+	}
+
+	private Authentication authenticateUserWithLoginToken(final Authentication loginToken) {
+		return getAuthenticationManager().authenticate(loginToken);
+	}
     
     /**
     * Every time we authenticate with Trello, 
