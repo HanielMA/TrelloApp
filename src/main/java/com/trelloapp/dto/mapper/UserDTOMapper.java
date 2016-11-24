@@ -16,4 +16,10 @@ public interface UserDTOMapper {
     @Mapping(source = "user.password", target = "user.password")
     @Mapping(source = "isMyself", target = "isMyself")
     UserDTO toDTO(User user, boolean isMyself);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "email", target = "username")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "password", target = "password")
+    User toEntity(UserDTO dto);
 }
