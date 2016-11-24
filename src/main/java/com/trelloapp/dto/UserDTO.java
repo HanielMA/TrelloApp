@@ -12,13 +12,16 @@ import lombok.ToString;
 @ToString(exclude = {"user"})
 @EqualsAndHashCode
 public class UserDTO {
-	
     private final User user;
 
     @Getter
     @Setter
     private Boolean isMyself = null;
-    
+
+    public UserDTO() {
+        this.user = new User();
+    }
+
     public UserDTO(User user, Boolean isMyself) {
     	this.user = user;
     	this.isMyself = isMyself;
