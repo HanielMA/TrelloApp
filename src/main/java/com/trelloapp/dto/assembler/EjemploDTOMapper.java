@@ -1,7 +1,7 @@
 package com.trelloapp.dto.assembler;
 
-import mierda.Ejemplo;
-import mierda.EjemploDTO;
+import prueba.Ejemplo;
+import prueba.EjemploDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

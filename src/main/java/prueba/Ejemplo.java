@@ -1,24 +1,10 @@
-package mierda;
+package prueba;
 
-import lombok.Getter;
-import lombok.Setter;
-
-public class EjemploDTO {
-
-
-    @Getter
-    @Setter
-    private String a1;
-
-    @Getter
-    @Setter
-    private String a2;
-
-    /*
+public class Ejemplo {
     private String a1;
     private String a2;
 
-    public EjemploDTO() {}
+    public Ejemplo() {}
 
     public String getA1() {
         return a1;
@@ -35,5 +21,4 @@ public class EjemploDTO {
     public void setA2(String a2) {
         this.a2 = a2;
     }
-*/
 }
