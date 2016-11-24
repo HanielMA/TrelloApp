@@ -21,6 +21,7 @@
         <start-class>com.trelloapp.Application</start-class>
         <querydsl.version>4.1.4</querydsl.version>
         <spock.version>1.0-groovy-2.4</spock.version>
+        <org.mapstruct.version>1.1.0.Final</org.mapstruct.version>
     </properties>
 
     <dependencies>
@@ -136,7 +137,20 @@
         	<groupId>com.julienvey.trello</groupId>
         	<artifactId>trello-java-wrapper</artifactId>
         	<version>0.3.2</version>
-        </dependency>   
+        </dependency>
+
+        <!-- Maptruct: Entity -> DTO mapper -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -197,6 +211,44 @@
                             <processor>
                                 com.querydsl.apt.jpa.JPAAnnotationProcessor
                             </processor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Configuracion de la compilacion, necesaria para que MapStruct coja los metodos que genera Lombok -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>Normal compilation (excluding mappers)</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/**/mapper/**/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>MapStruct mappers</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/**/mapper/**/*</include>
+                                <include>${project.build.directory}/classes/**/*</include>
+                            </includes>
+                            <annotationProcessors>
+                                <processor>org.mapstruct.ap.MappingProcessor</processor>
+                            </annotationProcessors>
                         </configuration>
                     </execution>
                 </executions>

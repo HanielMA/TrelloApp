@@ -18,6 +18,10 @@ public class UserDTO {
     @Getter
     @Setter
     private Boolean isMyself = null;
+
+    public UserDTO() {
+        this.user = new User();
+    }
     
     public UserDTO(User user, Boolean isMyself) {
     	this.user = user;
