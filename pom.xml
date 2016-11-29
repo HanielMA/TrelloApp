@@ -125,18 +125,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>com.julienvey.trello</groupId>
-        	<artifactId>trello-java-wrapper</artifactId>
-        	<version>0.3.2</version>
-        </dependency>   
-        <dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth</artifactId>
 		</dependency>  
 		<dependency>
         	<groupId>com.julienvey.trello</groupId>
         	<artifactId>trello-java-wrapper</artifactId>
-        	<version>0.3.2</version>
+        	<version>0.3.3-SNAPSHOT</version>
         </dependency>
 
         <!-- Maptruct: Entity -> DTO mapper -->
